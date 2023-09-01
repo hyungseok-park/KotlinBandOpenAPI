@@ -1,0 +1,7 @@
+plugins {
+    id("ktor.plugin") version "2.3.3"
+}
+
+dependencies {
+    implementation("io.ktor:ktor-server-netty")
+}
