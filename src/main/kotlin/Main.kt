@@ -2,17 +2,27 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
+import io.ktor.http.*
+import com.typesafe.config.ConfigFactory
 
 fun main() {
-    val url = URL("https://openapi.band.us/v2.1/bands?access_token=ZQAAATqHjie0aR7mMUyVx7DgwPyJDgGF1Jdt_IUDQXlop4z1l2kEDRhQ0FrKN44tN1WpDY-kXpieBeSnwqJMqO7dNjMWpknXcbg1nxyf-K_jEBJi")
 
-    // Open a connection
-    val connection = url.openConnection() as HttpURLConnection
+    val config = ConfigFactory.load("app.properties")
+    val accessToken = config.getString("band.token")
+    val apiHost = config.getString("api.host")
+    val apiVersion = config.getString("api.version")
+
+    val url = URLBuilder().apply {
+        protocol = URLProtocol.HTTPS
+        host = apiHost
+        path(apiVersion, "bands")
+        parameters.append("access_token", accessToken)
+    }.buildString()
+    val connection = URL(url).openConnection() as HttpURLConnection
 
     try {
         connection.requestMethod = "GET"
         val responseCode = connection.responseCode
-        println("Response Code: $responseCode")
 
         if (responseCode == HttpURLConnection.HTTP_OK) {
             val inputStream = connection.inputStream
@@ -20,7 +30,6 @@ fun main() {
             val response = reader.readText()
             reader.close()
 
-            println("Response Data:")
             println(response)
         } else {
             println("Failed to get a valid response")
