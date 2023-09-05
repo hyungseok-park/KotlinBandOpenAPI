@@ -1,2 +1,2 @@
 # KotlinBandOpenAPI
-Examples with Open API of BAND
+BAND's OpenAPI examples written in Kotlin
